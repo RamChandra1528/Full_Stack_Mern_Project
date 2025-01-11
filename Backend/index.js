@@ -23,7 +23,7 @@ const authToken = (req, res, next) => {
   }
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded; // Attach decoded token to the request
+    req.user = decoded; 
     next();
   } catch (error) {
     return res.status(401).json({ error: "Invalid token" });
@@ -95,7 +95,7 @@ app.post("/user/login", async (req, res) => {
         const token = jwt.sign(
           { id: user._id, email: user.email },
           JWT_SECRET,
-          { expiresIn: "1h" }
+          { expiresIn: "1m" }
         );
         res.status(200).json({ token, message: "User Logged In Successfully" });
       } else {
