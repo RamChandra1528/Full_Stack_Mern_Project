@@ -1,31 +1,30 @@
-/* eslint-disable no-undef */
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Auth.css";
 
 const Login = () => {
   const [usernameEmail, setUsernameEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/user/login", {
+      const response = await fetch("http://localhost:5000/user/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          username: usernameEmail,
-          password: password,
-        }),
+        body: JSON.stringify({ usernameOrEmail: usernameEmail, password }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message || "Login successful!");
+        localStorage.setItem("token", data.token);
+        navigate("/");
       } else {
-        alert(data.error || "Login failed. Please check your credentials.");
+        alert(data.error || "Invalid Credentials");
       }
     } catch (error) {
       console.error("Error during login:", error);
@@ -43,8 +42,9 @@ const Login = () => {
             <input
               type="text"
               id="usernameOrEmail"
-              required
+              value={usernameEmail}
               onChange={(e) => setUsernameEmail(e.target.value)}
+              required
             />
           </div>
           <div className="form-group">
@@ -52,8 +52,9 @@ const Login = () => {
             <input
               type="password"
               id="password"
-              required
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </div>
           <button type="submit">Login</button>

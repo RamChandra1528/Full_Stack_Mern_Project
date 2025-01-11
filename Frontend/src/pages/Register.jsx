@@ -1,5 +1,5 @@
-import "./Auth.css";
 import { useState } from "react";
+import "./Auth.css";
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
@@ -7,19 +7,33 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://localhost:3000/user/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ firstName, lastName, email, username, password }),
-    });
-    if (response.ok) {
-      alert("User Registered Successfully");
-    } else {
-      alert("Error Registering User");
+    try {
+      const response = await fetch("http://localhost:5000/user/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          username,
+          password,
+        }),
+      });
+
+      if (response.ok) {
+        alert("User Registered Successfully");
+      } else {
+        const data = await response.json();
+        alert(data.error || "Error Registering User");
+      }
+    } catch (error) {
+      console.error("Error during registration:", error);
+      alert("An error occurred. Please try again.");
     }
   };
 
